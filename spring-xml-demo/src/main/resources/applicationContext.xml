@@ -1,0 +1,20 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define Address Bean -->
+    <bean id="addressBean" class="com.example.springxml.model.Address">
+        <property name="city" value="New York"/>
+        <property name="state" value="NY"/>
+    </bean>
+
+    <!-- Define Employee Bean -->
+    <bean id="employeeBean" class="com.example.springxml.model.Employee">
+        <property name="id" value="101"/>
+        <property name="name" value="John Doe"/>
+        <property name="address" ref="addressBean"/>
+    </bean>
+
+</beans>
