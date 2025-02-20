@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration Form</title>
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Inline CSS -->
+    <style>
+        body {
+            background: linear-gradient(120deg, #84fab0, #8fd3f4); /* Gradient background */
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+        }
+
+        .form-container {
+            max-width: 500px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .form-container:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50; /* Darker text color for the title */
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        .form-container label {
+            font-weight: 500;
+            color: #2c3e50; /* Label color */
+        }
+
+        .form-container input {
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            font-size: 16px;
+        }
+
+        .form-container input:focus {
+            border-color: #4caf50; /* Highlight input on focus */
+            box-shadow: 0px 0px 5px #4caf50;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(120deg, #4caf50, #81c784); /* Gradient button */
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(120deg, #388e3c, #66bb6a); /* Darker gradient on hover */
+            transform: scale(1.05);
+        }
+
+        #responseMessage {
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        #responseMessage.success {
+            color: #4caf50; /* Success message color */
+        }
+
+        #responseMessage.error {
+            color: #e74c3c; /* Error message color */
+        }
+    </style>
+</head>
+<body>
+    <form class="container form-container" id="registrationForm">
+        <h2>Register Now</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" class="form-control" required placeholder="Enter your name">
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" class="form-control" required placeholder="Enter your email">
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" class="form-control" required placeholder="Enter a strong password">
+
+        <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+    <div id="responseMessage"></div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#registrationForm").on("submit", function (event) {
+                event.preventDefault();
+
+                const formData = {
+                    name: $("#name").val(),
+                    email: $("#email").val(),
+                    password: $("#password").val()
+                };
+                console.log(JSON.stringify(formData, null, 2));                      //Log JSON String to console to print json format
+
+
+                $.ajax({
+                    url: "/ServletProject/RegisterServlet",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        if (response.status === "success") {
+                            $("#responseMessage").removeClass("error").addClass("success").text(response.message);
+                        } else {
+                            $("#responseMessage").removeClass("success").addClass("error").text(response.message);
+                        }
+                    },
+                    error: function () {
+                        $("#responseMessage").removeClass("success").addClass("error").text("An error occurred. Please try again.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Dynamic Dropdown</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Dynamic Country-State Dropdown</h2>
+            </div>
+            <div class="card-body">
+                <form>
+                    <div class="mb-4">
+                        <label for="country" class="form-label">
+                            <i class="bi bi-geo-alt-fill me-2"></i>Country
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <img id="country-flag" src="" alt="Country Flag" class="rounded-circle" width="24" height="24" style="display:none;">
+                            </span>
+                            <select id="country" class="form-select border-start-0">
+                                <option value="" data-flag="">Select a Country</option>
+                                <option value="1" data-flag="https://flagcdn.com/in.svg">India</option>
+                                <option value="2" data-flag="https://flagcdn.com/us.svg">USA</option>
+                                <option value="3" data-flag="https://flagcdn.com/ca.svg">Canada</option>
+                                <option value="4" data-flag="https://flagcdn.com/gb.svg">UK</option>
+                                <option value="5" data-flag="https://flagcdn.com/au.svg">Australia</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="state" class="form-label">
+                            <i class="bi bi-pin-map-fill me-2"></i>State
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-geo"></i>
+                            </span>
+                            <select id="state" class="form-select border-start-0">
+                                <option value="">Select a State</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary w-100">Submit</button>
+                </form>
+                <div id="alert" class="alert mt-3 d-none">
+                    <i id="alert-icon" class="me-2"></i>
+                    <span id="alert-message"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#country").on("change", function () {
+                const countryId = $(this).val();
+                const $stateDropdown = $("#state");
+                const selectedFlag = $(this).find(":selected").data("flag");
+
+                // Update country flag
+                const $flagImg = $("#country-flag");
+                if (selectedFlag) {
+                    $flagImg.attr("src", selectedFlag).show();
+                } else {
+                    $flagImg.hide();
+                }
+
+                $stateDropdown.empty().append('<option value="">Select a State</option>');
+
+                if (countryId) {
+                    $.ajax({
+                        url: `TableDropdown?countryId=${countryId}`,
+                        method: "GET",
+                        dataType: "json",
+                        success: function (data) {
+                            $.each(data, function (index, state) {
+                                $stateDropdown.append(`<option value="${state.id}">${state.name}</option>`);
+                            });
+                        },
+                        error: function () {
+                            console.error("Error fetching states.");
+                        },
+                    });
+                }
+            });
+
+            $(".btn-primary").on("click", function () {
+                const countryId = $("#country").val();
+                const stateId = $("#state").val();
+                const $alertDiv = $("#alert");
+                const $alertIcon = $("#alert-icon");
+                const $alertMessage = $("#alert-message");
+
+                $alertDiv.removeClass("alert-success alert-danger d-none");
+                $alertIcon.removeClass("bi-check-circle-fill bi-exclamation-circle-fill");
+                $alertMessage.text("");
+
+                if (countryId && stateId) {
+                    $alertDiv.addClass("alert-success").removeClass("d-none");
+                    $alertIcon.addClass("bi-check-circle-fill");
+                    $alertMessage.text("Selection submitted successfully!");
+                } else {
+                    $alertDiv.addClass("alert-danger").removeClass("d-none");
+                    $alertIcon.addClass("bi-exclamation-circle-fill");
+                    $alertMessage.text("Please select both a country and a state!");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
